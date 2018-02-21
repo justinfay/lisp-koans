@@ -37,12 +37,12 @@
 
 (define-test test-empty-list-is-both-list-and-atom
     "the empty list, nil, is unique in that it is both a list and an atom"
-  (true-or-false? ___ (listp nil))
-  (true-or-false? ___ (atom nil)))
+  (true-or-false? t (listp nil))
+  (true-or-false? t (atom nil)))
 
 
 (define-test test-keywords
     "symbols like :hello or :like-this are treated differently in lisp.
      Called keywords, they are symbols that evaluate to themselves."
-  (true-or-false? ___ (equal :this-is-a-keyword :this-is-a-keyword))
-  (true-or-false? ___ (equal :this-is-a-keyword ':this-is-a-keyword)))
+  (true-or-false? t (equal :this-is-a-keyword :this-is-a-keyword))
+  (true-or-false? t (equal :this-is-a-keyword ':this-is-a-keyword)))
