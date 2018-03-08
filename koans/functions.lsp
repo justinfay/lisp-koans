@@ -112,120 +112,120 @@
 
 (define-test test-many-kinds-params
     "CL provides the programmer with more than enough rope to hang himself."
-   (assert-equal (func-with-funky-parameters 1) ___)
-   (assert-equal (func-with-funky-parameters 1 :b 2) ___)
-   (assert-equal (func-with-funky-parameters 1 :b 2 :c 3) ___)
-   (assert-equal (func-with-funky-parameters 1 :c 3 :b 2) ___))
+   (assert-equal (func-with-funky-parameters 1) '(1 nil 1 nil))
+   (assert-equal (func-with-funky-parameters 1 :b 2) '(1 2 1 (:b 2)))
+   (assert-equal (func-with-funky-parameters 1 :b 2 :c 3) '(1 2 3 (:b 2 :c 3)))
+   (assert-equal (func-with-funky-parameters 1 :c 3 :b 2) '(1 2 3 (:c 3 :b 2))))
 
 
-;; Note that &rest parameters have to come before &key parameters.
-;; This is an error: (defun f (&key a &rest x) () )
-;; But this is ok:   (defun f (&rest x &key a) () )
+; Note that &rest parameters have to come before &key parameters.
+; This is an error: (defun f (&key a &rest x) () )
+; But this is ok:   (defun f (&rest x &key a) () )
 
 
-;(define-test test-lambdas-are-nameless-functions
-;    "A lambda form defines a function, but with no name.  It is possible
-;     to execute that function immediately, or put it somewhere for later use."
-;   (assert-equal 19 ((lambda (a b) (+ a b)) 10 9))
-;  (let ((my-function))
-;    (setf my-function (lambda (a b) (* a b)))
-;    (assert-equal ___ (funcall my-function 11 9)))
-;  (let ((list-of-functions nil))
-;    (push (lambda (a b) (+ a b)) list-of-functions)
-;    (push (lambda (a b) (* a b)) list-of-functions)
-;    (push (lambda (a b) (- a b)) list-of-functions)
-;    (assert-equal ___ (funcall (second list-of-functions) 2 33))))
-;
-;(define-test test-lambdas-can-have-optional-params
-;   (assert-equal ___ ((lambda (a &optional (b 100)) (+ a b)) 10 9))
-;   (assert-equal ___ ((lambda (a &optional (b 100)) (+ a b)) 10)))
-;
-;
-;; returns sign x
-;(defun sign-of (x)
-;  (if (< x 0) (return-from sign-of -1))
-;  (if (eq x 0) (return-from sign-of 0))
-;  1)
-;
-;(define-test test-return-from-function-early
-;   (assert-equal (sign-of -5.5) ___)
-;   (assert-equal (sign-of 0) ___)
-;   (assert-equal (sign-of ___) 1))
-;
-;
-;;; ----
-;
-;
-;;; Lambdas create "lexical closures", meaning that the resulting function, when
-;;; called, will execute in an environment wherein the lexical bindings to all
-;;; referred to names still apply.
-;;; This example from "Common Lisp The Language" Ch. 7
-;
-;(defun adder (x)
-;  "The result of (adder n) is a nameless function with one parameter.
-;  This function will add n to its argument."
-;  (lambda (y) (+ x y)))
-;
-;(define-test test-lexical-closure-over-adder ()
-;  (let ((add-100 (adder 100))
-;        (add-500 (adder 500)))
-;  "add-100 and add-500 now refer to different bindings to x"
-;   (assert-equal ___ (funcall add-100 3))
-;   (assert-equal ___ (funcall add-500 3))))
-;
-;
-;;; ----
-;
-;
-;;; The closure gives the returned function access to the bindings, not just the
-;;; values.  This means that two functions which close over the same variables
-;;; will always see the same values of those variables if one does a setq.
-;
-;(defun two-funs (x)
-;  "Returns a list of two functions.
-;   The first takes no parameters and returns x.
-;   The second takes one parameter, y, and resets x to the value of y."
-;  (list (function (lambda () x))
-;        (function (lambda (y) (setq x y)))))
-;
-;(define-test test-lexical-closure-interactions
-;    "An illustration of how lexical closures may interact."
-;  (let ((tangled-funs-1 (two-funs 1))
-;        (tangled-funs-2 (two-funs 2)))
-;     (assert-equal (funcall (first tangled-funs-1)) ___)
-;     (funcall (second tangled-funs-1) 0)
-;     (assert-equal (funcall (first tangled-funs-1)) ___)
-;
-;     (assert-equal (funcall (first tangled-funs-2)) ___)
-;     (funcall (second tangled-funs-2) 100)
-;     (assert-equal (funcall (first tangled-funs-2)) ___)))
-;
-;
-;(define-test test-apply-function-with-apply
-;  "APPLY calls the function parameter on a list of all the remaining
-;   parameters"
-;  (let (f1 f2 f3)
-;    (setq f1 '+)
-;    (setq f2 '-)
-;    (setq f3 'max)
-;
-;    (assert-equal ___ (apply f1 '(1 2)))
-;    (assert-equal ___ (apply f2 '(1 2)))
-;
-;    ; after the function name, the parameters are consed onto the front
-;    ; of the very last parameter
-;    (assert-equal ___ (apply f1 1 2 '(3)))
-;    (assert-equal ___ (apply f3 1 2 3 4 '()))))
-;
-;
-;(define-test test-apply-function-with-funcall
-;  "FUNCALL calls the function parameter on a list of all the remaining
-;   parameters.  Remaining params do not expect a final list."
-;  (let (f1 f2 f3)
-;    (setq f1 '+)
-;    (setq f2 '-)
-;    (setq f3 'max)
-;    (assert-equal ___ (funcall f1 1 2))
-;    (assert-equal ___ (funcall f2 1 2))
-;    (assert-equal ___ (funcall f1 1 2 3))
-;    (assert-equal ___ (funcall f3 1 2 3 4))))
+(define-test test-lambdas-are-nameless-functions
+    "A lambda form defines a function, but with no name.  It is possible
+     to execute that function immediately, or put it somewhere for later use."
+   (assert-equal 19 ((lambda (a b) (+ a b)) 10 9))
+  (let ((my-function))
+    (setf my-function (lambda (a b) (* a b)))
+    (assert-equal 99 (funcall my-function 11 9)))
+  (let ((list-of-functions nil))
+    (push (lambda (a b) (+ a b)) list-of-functions)
+    (push (lambda (a b) (* a b)) list-of-functions)
+    (push (lambda (a b) (- a b)) list-of-functions)
+    (assert-equal 66 (funcall (second list-of-functions) 2 33))))
+
+(define-test test-lambdas-can-have-optional-params
+   (assert-equal 19 ((lambda (a &optional (b 100)) (+ a b)) 10 9))
+   (assert-equal 110 ((lambda (a &optional (b 100)) (+ a b)) 10)))
+
+
+; returns sign x
+(defun sign-of (x)
+  (if (< x 0) (return-from sign-of -1))
+  (if (eq x 0) (return-from sign-of 0))
+  1)
+
+(define-test test-return-from-function-early
+   (assert-equal (sign-of -5.5) -1)
+   (assert-equal (sign-of 0) 0)
+   (assert-equal (sign-of 1) 1))
+
+
+; ----
+
+
+;; Lambdas create "lexical closures", meaning that the resulting function, when
+;; called, will execute in an environment wherein the lexical bindings to all
+;; referred to names still apply.
+;; This example from "Common Lisp The Language" Ch. 7
+
+(defun adder (x)
+  "The result of (adder n) is a nameless function with one parameter.
+  This function will add n to its argument."
+  (lambda (y) (+ x y)))
+
+(define-test test-lexical-closure-over-adder ()
+  (let ((add-100 (adder 100))
+        (add-500 (adder 500)))
+  "add-100 and add-500 now refer to different bindings to x"
+   (assert-equal 103 (funcall add-100 3))
+   (assert-equal 503 (funcall add-500 3))))
+
+
+; ----
+
+
+;; The closure gives the returned function access to the bindings, not just the
+;; values.  This means that two functions which close over the same variables
+;; will always see the same values of those variables if one does a setq.
+
+(defun two-funs (x)
+  "Returns a list of two functions.
+   The first takes no parameters and returns x.
+   The second takes one parameter, y, and resets x to the value of y."
+  (list (function (lambda () x))
+        (function (lambda (y) (setq x y)))))
+
+(define-test test-lexical-closure-interactions
+    "An illustration of how lexical closures may interact."
+  (let ((tangled-funs-1 (two-funs 1))
+        (tangled-funs-2 (two-funs 2)))
+     (assert-equal (funcall (first tangled-funs-1)) 1)
+     (funcall (second tangled-funs-1) 0)
+     (assert-equal (funcall (first tangled-funs-1)) 0)
+
+     (assert-equal (funcall (first tangled-funs-2)) 2)
+     (funcall (second tangled-funs-2) 100)
+     (assert-equal (funcall (first tangled-funs-2)) 100)))
+
+
+(define-test test-apply-function-with-apply
+  "APPLY calls the function parameter on a list of all the remaining
+   parameters"
+  (let (f1 f2 f3)
+    (setq f1 '+)
+    (setq f2 '-)
+    (setq f3 'max)
+
+    (assert-equal 3 (apply f1 '(1 2)))
+    (assert-equal -1 (apply f2 '(1 2)))
+
+    ; after the function name, the parameters are consed onto the front
+    ; of the very last parameter
+    (assert-equal 6 (apply f1 1 2 '(3)))
+    (assert-equal 4 (apply f3 1 2 3 4 '()))))
+
+
+(define-test test-apply-function-with-funcall
+  "FUNCALL calls the function parameter on a list of all the remaining
+   parameters.  Remaining params do not expect a final list."
+  (let (f1 f2 f3)
+    (setq f1 '+)
+    (setq f2 '-)
+    (setq f3 'max)
+    (assert-equal 3 (funcall f1 1 2))
+    (assert-equal -1 (funcall f2 1 2))
+    (assert-equal 6 (funcall f1 1 2 3))
+    (assert-equal 4 (funcall f3 1 2 3 4))))
